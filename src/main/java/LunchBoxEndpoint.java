@@ -80,8 +80,16 @@ public class LunchBoxEndpoint {
                 databaseOperations.updateMenuItemInStock(fireBaseService.getDb(),menuId,isInStock,userIdSession);
             }else if(actualObj.get("action").asText().equalsIgnoreCase("getActiveOrders")) {
                 databaseOperations.getAllCActiveOrders(session,fireBaseService.getDb());
-
+            }else if(actualObj.get("action").asText().equalsIgnoreCase("completedOrder")) {
+                String orderId = actualObj.get("orderId").asText();
+                databaseOperations.updateOrder(fireBaseService.getDb(),orderId,"Done");
+            }else if(actualObj.get("action").asText().equalsIgnoreCase("cancelledOrder")) {
+                String orderId = actualObj.get("orderId").asText();
+                databaseOperations.updateOrder(fireBaseService.getDb(),orderId,"Cancelled");
+            }else if(actualObj.get("action").asText().equalsIgnoreCase("getAllOrders")) {
+                databaseOperations.getAllOrders(session,fireBaseService.getDb());
             }
+
             return null;
         }catch (Exception e){
             e.printStackTrace();
@@ -94,7 +102,6 @@ public class LunchBoxEndpoint {
     @OnClose
 
     public void onClose(Session session, CloseReason closeReason) {
-
 
     }
 
