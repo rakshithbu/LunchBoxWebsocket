@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.firebase.database.*;
 import javax.websocket.Session;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -15,6 +16,7 @@ public class DatabaseOperations {
 
     public void getAllCategories(Session session,FirebaseDatabase db) {
 
+        System.out.println("inside get all categories");
         DatabaseReference ref = db.getReference("/categories");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -64,8 +66,10 @@ public class DatabaseOperations {
         });
     }
 
-    public void insertIntoCategories(FirebaseDatabase db,Category category){
+    public void insertIntoCategories(FirebaseDatabase db,Category category) throws SQLException {
         DatabaseReference presentersReference = FirebaseDatabase.getInstance().getReference("categories");
+
+
         final String presenterId = UUID.randomUUID().toString();
         category.setCatId(presenterId);
         presentersReference.child(presenterId).setValue(category, new DatabaseReference.CompletionListener() {
