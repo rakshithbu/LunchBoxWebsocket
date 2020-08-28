@@ -222,6 +222,22 @@ public class DatabaseOperations {
         });
     }
 
+    public void deleteMenuItem(FirebaseDatabase db,String menuId){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("itemMenus").child(menuId);
+       ref.removeValue(mRemoveListener);
+    }
+
+    private DatabaseReference.CompletionListener mRemoveListener =
+            new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError error, DatabaseReference ref) {
+                    if (error == null) {
+                        System.out.println("Removed: " + ref);
+                    } else {
+                    }
+                }
+            };
+
     public void updateOrder(FirebaseDatabase db,String orderId,String status){
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("orders").child(orderId);

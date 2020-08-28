@@ -88,6 +88,9 @@ public class LunchBoxEndpoint {
                 databaseOperations.updateOrder(fireBaseService.getDb(),orderId,"Cancelled");
             }else if(actualObj.get("action").asText().equalsIgnoreCase("getAllOrders")) {
                 databaseOperations.getAllOrders(session,fireBaseService.getDb());
+            }else if(actualObj.get("action").asText().equalsIgnoreCase("deleteMenuItem")){
+                String itemId = actualObj.get("itemId").asText();
+                databaseOperations.deleteMenuItem(fireBaseService.getDb(),itemId);
             }
 
             return null;
