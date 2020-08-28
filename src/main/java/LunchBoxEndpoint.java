@@ -78,6 +78,9 @@ public class LunchBoxEndpoint {
                 boolean isInStock = actualObj.get("isInStock").asBoolean();
                 String menuId = actualObj.get("itemId").asText();
                 databaseOperations.updateMenuItemInStock(fireBaseService.getDb(),menuId,isInStock,userIdSession);
+            }else if(actualObj.get("action").asText().equalsIgnoreCase("getActiveOrders")) {
+                databaseOperations.getAllCActiveOrders(session,fireBaseService.getDb());
+
             }
             return null;
         }catch (Exception e){

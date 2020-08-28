@@ -1,5 +1,6 @@
 import Model.Category;
 import Model.MenuItem;
+import Model.Order;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -165,6 +166,33 @@ public class DatabaseOperations {
                 System.out.println("value : " + sessionMap.get(key));
             }
         }
+    }
+
+    public void getAllCActiveOrders(Session session,FirebaseDatabase db){
+
+        DatabaseReference ref = db.getReference("/orders");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    Order order = postSnapshot.getValue(Order.class);
+                    try {
+                        if(order.getStatus().equalsIgnoreCase("IN PROGRESS")){
+                            ObjectNode jsonNode = mapper.createObjectNode();
+                            jsonNode.put("action","getActiveOrders");
+                            jsonNode.put("data",mapper.writeValueAsString(order));
+                            session.getAsyncRemote().sendText(mapper.writeValueAsString(jsonNode));
+                        }
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
     }
 
 
