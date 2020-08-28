@@ -171,7 +171,7 @@ public class DatabaseOperations {
     public void getAllCActiveOrders(Session session,FirebaseDatabase db){
 
         DatabaseReference ref = db.getReference("/orders");
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
@@ -198,18 +198,18 @@ public class DatabaseOperations {
     public void getAllOrders(Session session,FirebaseDatabase db){
 
         DatabaseReference ref = db.getReference("/orders");
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Order order = postSnapshot.getValue(Order.class);
                     try {
-                        //if(!order.getStatus().equalsIgnoreCase("IN PROGRESS")){
+                        if(!order.getStatus().equalsIgnoreCase("IN PROGRESS")){
                             ObjectNode jsonNode = mapper.createObjectNode();
                             jsonNode.put("action","getAllOrders");
                             jsonNode.put("data",mapper.writeValueAsString(order));
                             session.getAsyncRemote().sendText(mapper.writeValueAsString(jsonNode));
-                      //  }
+                        }
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }
