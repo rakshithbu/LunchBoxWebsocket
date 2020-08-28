@@ -1,21 +1,18 @@
 import Model.Category;
 import Model.MenuItem;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.firebase.database.*;
-
 import javax.websocket.Session;
-import java.io.IOException;
-import java.sql.*;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class DatabaseOperations {
     ObjectMapper mapper = new ObjectMapper();
 
-    public void getAllCategories(Session session,FirebaseDatabase db) throws JsonProcessingException {
+    public void getAllCategories(Session session,FirebaseDatabase db) {
 
         DatabaseReference ref = db.getReference("/categories");
         ref.addValueEventListener(new ValueEventListener() {
@@ -41,7 +38,7 @@ public class DatabaseOperations {
     }
 
 
-    public void getAllCategoriesMenuList(Session session,FirebaseDatabase db) throws JsonProcessingException {
+    public void getAllCategoriesMenuList(Session session,FirebaseDatabase db){
 
         DatabaseReference ref = db.getReference("/categories");
         ref.addValueEventListener(new ValueEventListener() {
@@ -89,11 +86,13 @@ public class DatabaseOperations {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     MenuItem menuItem = postSnapshot.getValue(MenuItem.class);
+                   // menuItem.setCategoryName(getNameBasedOnCategoryId(menuItem.getCatId()));
                     try {
                         ObjectNode jsonNode = mapper.createObjectNode();
                         jsonNode.put("action","getAllMenuItems");
                         jsonNode.put("data",mapper.writeValueAsString(menuItem));
                         session.getAsyncRemote().sendText(mapper.writeValueAsString(jsonNode));
+
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }
@@ -111,6 +110,7 @@ public class DatabaseOperations {
         DatabaseReference presentersReference = FirebaseDatabase.getInstance().getReference("itemMenus");
         final String presenterId = UUID.randomUUID().toString();
         menuItem.setItemId(presenterId);
+        menuItem.setInStock(true);
         presentersReference.child(presenterId).setValue(menuItem, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
@@ -122,6 +122,82 @@ public class DatabaseOperations {
         });
 
     }
+
+    public void updateCategory(FirebaseDatabase db,Category category){
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("categories").child(category.getCatId());
+        Map<String, Object> updates = new HashMap<>();
+
+        if(category.getCatName()!=null &&  !category.getCatName().isEmpty()){
+            ref.child("catName").setValueAsync(category.getCatName());
+            //updates.put("catName", category.getCatName());
+        }
+
+        if(category.getCatImage()!=null &&  !category.getCatImage().isEmpty()){
+            ref.child("catImage").setValueAsync(category.getCatImage());
+            //updates.put("catImage", category.getCatImage());
+        }
+    }
+
+    public void updateMenuItemInStock(FirebaseDatabase db,String menuId,boolean isInStock,Map<String,Session> sessionMap){
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("itemMenus").child(menuId);
+        Map<String, Object> updates = new HashMap<>();
+
+        if(menuId!=null &&  !menuId.isEmpty()){
+            ref.child("inStock").setValueAsync(isInStock);
+            for (String key: sessionMap.keySet()) {
+                ObjectNode jsonNode = mapper.createObjectNode();
+                jsonNode.put("action","stockNotification");
+
+                if(isInStock){
+                    jsonNode.put("data","item is instock");
+                }else{
+                    jsonNode.put("data","item out of stock");
+                }
+
+                try{
+                    sessionMap.get(key).getAsyncRemote().sendText(mapper.writeValueAsString(jsonNode));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+                System.out.println("value : " + sessionMap.get(key));
+            }
+        }
+    }
+
+
+
+
+//    public String getNameBasedOnCategoryId(String categoryId){
+//        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("categories").child(categoryId);
+//
+//        System.out.println(ref.child("catName").getKey());
+//
+//
+//        Category category2 = new Category();
+//        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot snapshot) {
+//
+//                for (DataSnapshot user: snapshot.getChildren()) {
+//                    Category category = user.getValue(Category.class);
+//                    //this is all you need to get a specific user by Uid
+//                    if (category.getCatId().equals(categoryId)){
+//                        category2.setCatName(category.getCatName());
+//
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//        return category2.getCatName();
+//    }
 
 
 }

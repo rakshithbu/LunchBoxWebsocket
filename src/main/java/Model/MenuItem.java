@@ -8,6 +8,9 @@ public class MenuItem {
     private String itemDesc;
     private double price;
     private String itemImage;
+    private boolean deal;
+    private boolean inStock;
+    private String categoryName;
 
     public String getItemId() {
         return itemId;
@@ -57,6 +60,30 @@ public class MenuItem {
         this.itemImage = itemImage;
     }
 
+    public boolean isDeal() {
+        return deal;
+    }
+
+    public void setDeal(boolean deal) {
+        this.deal = deal;
+    }
+
+    public boolean isInStock() {
+        return inStock;
+    }
+
+    public void setInStock(boolean inStock) {
+        this.inStock = inStock;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
     @Override
     public String toString() {
         return "MenuItem{" +
@@ -66,6 +93,9 @@ public class MenuItem {
                 ", itemDesc='" + itemDesc + '\'' +
                 ", price=" + price +
                 ", itemImage='" + itemImage + '\'' +
+                ", deal=" + deal +
+                ", inStock=" + inStock +
+                ", categoryName='" + categoryName + '\'' +
                 '}';
     }
 }
