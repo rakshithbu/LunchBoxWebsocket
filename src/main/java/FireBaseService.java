@@ -11,8 +11,9 @@ public class FireBaseService {
     public FireBaseService()  {
         System.out.println("inside firebase");
         try{
+
             InputStream inputStream=  getClass().getClassLoader().
-                    getResourceAsStream("firebase1.json");;
+                   getResourceAsStream("firebase.json");
             System.out.println("inside inputstream===>"+inputStream.available());
 
             FirebaseOptions options = null;

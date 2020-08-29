@@ -36,7 +36,7 @@ public class LunchBoxEndpoint {
             JsonNode actualObj = mapper.readTree(message);
 
             if(actualObj.get("action").asText().equalsIgnoreCase("androidDeviceConnect")){
-               String userId = actualObj.get("userId").asText();
+                String userId = actualObj.get("userId").asText();
                 ObjectNode n = mapper.createObjectNode();
                 n.put("action","stockNotification");
                 session.getAsyncRemote().sendText(mapper.writeValueAsString(n));

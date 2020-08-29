@@ -10,6 +10,7 @@ public class MenuItem {
     private String itemImage;
     private boolean deal;
     private boolean inStock;
+    private int quantity;
     private String categoryName;
 
     public String getItemId() {
@@ -76,6 +77,14 @@ public class MenuItem {
         this.inStock = inStock;
     }
 
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
     public String getCategoryName() {
         return categoryName;
     }
@@ -95,6 +104,7 @@ public class MenuItem {
                 ", itemImage='" + itemImage + '\'' +
                 ", deal=" + deal +
                 ", inStock=" + inStock +
+                ", quantity=" + quantity +
                 ", categoryName='" + categoryName + '\'' +
                 '}';
     }

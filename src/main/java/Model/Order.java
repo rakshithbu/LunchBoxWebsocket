@@ -6,6 +6,7 @@ public class Order {
     private String productIds;
     private String status;
     private long dateTime;
+    private String dummyDate;
 
     public String getOrderId() {
         return orderId;
@@ -47,6 +48,14 @@ public class Order {
         this.dateTime = dateTime;
     }
 
+    public String getDummyDate() {
+        return dummyDate;
+    }
+
+    public void setDummyDate(String dummyDate) {
+        this.dummyDate = dummyDate;
+    }
+
     @Override
     public String toString() {
         return "Order{" +
@@ -55,8 +64,7 @@ public class Order {
                 ", productIds='" + productIds + '\'' +
                 ", status='" + status + '\'' +
                 ", dateTime=" + dateTime +
+                ", dummyDate='" + dummyDate + '\'' +
                 '}';
     }
-
-
 }

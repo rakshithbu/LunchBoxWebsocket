@@ -68,8 +68,6 @@ public class DatabaseOperations {
 
     public void insertIntoCategories(FirebaseDatabase db,Category category) throws SQLException {
         DatabaseReference presentersReference = FirebaseDatabase.getInstance().getReference("categories");
-
-
         final String presenterId = UUID.randomUUID().toString();
         category.setCatId(presenterId);
         presentersReference.child(presenterId).setValue(category, new DatabaseReference.CompletionListener() {
@@ -116,13 +114,11 @@ public class DatabaseOperations {
         final String presenterId = UUID.randomUUID().toString();
         menuItem.setItemId(presenterId);
         menuItem.setInStock(true);
-        presentersReference.child(presenterId).setValue(menuItem, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                if (databaseError == null) {
+        menuItem.setQuantity(0);
+        presentersReference.child(presenterId).setValue(menuItem, (databaseError, databaseReference) -> {
+            if (databaseError == null) {
 
-                } else {
-                }
+            } else {
             }
         });
 
@@ -182,6 +178,7 @@ public class DatabaseOperations {
                     Order order = postSnapshot.getValue(Order.class);
                     try {
                         if(order.getStatus().equalsIgnoreCase("IN PROGRESS")){
+                            order.setDummyDate(Util.getDateTime(order.getDateTime()));
                             ObjectNode jsonNode = mapper.createObjectNode();
                             jsonNode.put("action","getActiveOrders");
                             jsonNode.put("data",mapper.writeValueAsString(order));
@@ -207,6 +204,7 @@ public class DatabaseOperations {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Order order = postSnapshot.getValue(Order.class);
+                    order.setDummyDate(Util.getDateTime(order.getDateTime()));
                     try {
                         if(!order.getStatus().equalsIgnoreCase("IN PROGRESS")){
                             ObjectNode jsonNode = mapper.createObjectNode();
